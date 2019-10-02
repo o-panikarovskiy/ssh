@@ -1,0 +1,22 @@
+{
+  "name": "ssh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ssh.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/o-panikarovskiy/ssh.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/o-panikarovskiy/ssh/issues"
+  },
+  "homepage": "https://github.com/o-panikarovskiy/ssh#readme",
+  "devDependencies": {
+    "tslint": "5.20.0"
+  }
+}
