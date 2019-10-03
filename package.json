@@ -4,7 +4,11 @@
   "description": "",
   "main": "ssh.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && npm run lint",
+    "lint": "tslint -c tslint.json --project .",
+    "tsc": "tsc",
+    "start": "node src/ssh.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +21,12 @@
   },
   "homepage": "https://github.com/o-panikarovskiy/ssh#readme",
   "devDependencies": {
-    "tslint": "5.20.0"
+    "tslint": "5.20.0",
+    "typescript": "3.6.3"
+  },
+  "dependencies": {
+    "@types/ssh2": "0.5.39",
+    "install": "0.13.0",
+    "ssh2": "0.8.5"
   }
 }

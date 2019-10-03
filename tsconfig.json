@@ -9,24 +9,18 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
     "alwaysStrict": true,
     "target": "esnext",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2018",
-      "dom"
+      "es2018"
     ]
   },
   "include": [
     "src/**/*",
     "tests/**/*",
-    "./server.ts",
-    "./test.ts"
+    "./test.ts", "client-shell copy.ts"
   ]
 }
