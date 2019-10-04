@@ -21,6 +21,6 @@
   "include": [
     "src/**/*",
     "tests/**/*",
-    "./test.ts", "client-shell copy.ts"
+    "./test.ts", "client-shell copy.ts", "ssh.ts"
   ]
 }

@@ -8,7 +8,7 @@
     "build": "tsc && npm run lint",
     "lint": "tslint -c tslint.json --project .",
     "tsc": "tsc",
-    "start": "node src/ssh.js"
+    "start": "npm run build && node ssh.js"
   },
   "repository": {
     "type": "git",

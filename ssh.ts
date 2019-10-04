@@ -1,8 +1,8 @@
-import { connect } from './connect';
-import { parseArgs } from './parse-args';
-import { startShell } from './shell/client-shell';
-import { commands } from './shell/commands';
-import { tunnel } from './tunnel';
+import { connect } from './src/connect';
+import { parseArgs } from './src/parse-args';
+import { startShell } from './src/shell/client-shell';
+import { commands } from './src/shell/commands';
+import { tunnel } from './src/tunnel';
 
 main(process.argv.slice(2));
 
