@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@types/ssh2": "0.5.39",
-    "install": "0.13.0",
     "ssh2": "0.8.5"
   }
 }

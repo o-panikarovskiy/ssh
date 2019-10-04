@@ -13,8 +13,8 @@ export function startShell(client: Client, commands: ICommand[]) {
 }
 
 class ClientShell extends EventEmitter {
+  private line = '';
   private rawMode = false;
-  private stdoutBuf = new Buffer('', 'utf-8');
 
   constructor(
     private readonly client: Client,
@@ -40,46 +40,54 @@ class ClientShell extends EventEmitter {
     try {
       await command.run(options);
     } catch (error) {
-      process.stdout.write('\n' + (typeof error === 'string' ? error : error.message));
+      process.stdout.write(`\n${typeof error === 'string' ? error : error.message}\n`);
     }
 
-    process.stdin.resume();
-    this.stream.on('data', this.onData);
-    this.stream.write('\n');
+    setTimeout(() => {
+      this.stream.on('data', this.onData);
+      this.stream.write('\n');
+      process.stdin.resume();
+    }, 500);
   }
 
   private onEnter() {
-    this.stream.write('\n');
+    const lines = this.line.split('\n');
+    const input = lines[lines.length - 1];
 
-    const lines = this.stdoutBuf.toString('utf-8').split('\n');
-    this.stdoutBuf = new Buffer('', 'utf-8');
+    this.line = '';
 
-    const res = this.parseInputLine(lines[lines.length - 1]);
-    if (!res) { return; }
-
-    const { options, command } = res;
-    if (command) {
+    const res = this.parseInputLine(input);
+    if (res) {
+      const { options, command } = res;
       this.runCommand(command, { ...options, client: this.client, stream: this.stream });
+    } else {
+      this.stream.write('\n');
     }
   }
 
   private parseInputLine(line: string) {
-    const matches = line.match(/:(.+)\$ (.+)/);
-    if (!matches || matches.length !== 3) { return; }
+    const matches = line.match(/\$ (.+)/);
+    if (!matches || matches.length !== 2) { return; }
 
-    const currentPath = matches[1];
-    const [commandName, ...args] = matches[2].trim().split(' ');
+    const [commandName, ...args] = matches[1].trim().split(' ').reduce((acc, a) => {
+      a = a.trim();
+      if (a) { acc.push(a); }
+      return acc;
+    }, [] as string[]);
 
-    const command = this.commands.find(c => c.canRun(commandName, args));
+    const command = this.commands.find(c => c.name === commandName);
+    if (!command) { return; }
 
-    return { command, options: { currentPath, commandName, args } };
+    return { command, options: {  args } };
   }
 
   private onData = (data: Buffer) => {
+    const str = data.toString('utf-8');
+    this.line += str;
+
     process.stdin.pause();
     process.stdout.write(data);
     process.stdin.resume();
-    this.stdoutBuf = Buffer.concat([this.stdoutBuf, data]);
   }
 
   private onKeypress = async (str: string, key: any) => {
@@ -87,7 +95,7 @@ class ClientShell extends EventEmitter {
       this.onTerminate();
     } else if (key.name === 'return') {
       this.onEnter();
-    } else if (key.sequence) {
+    } else {
       this.stream.write(key.sequence);
     }
   }

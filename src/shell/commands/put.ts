@@ -7,9 +7,8 @@ export default function create() {
 }
 
 class PutCommand implements ICommand {
-  public canRun(commandName: string) {
-    return commandName === 'put';
-  }
+  public readonly name = 'put';
+  private sftp: SFTPWrapper;
 
   public async run(options: ICommandOptions) {
     const { client, args } = options;
@@ -26,17 +25,17 @@ class PutCommand implements ICommand {
   }
 
   private getLocalPath(filePath: string) {
-    if (filePath.startsWith('./')) {
+    if (!filePath.startsWith('/')) {
       return path.join(path.dirname(process.argv[1]), filePath);
     }
     return filePath;
   }
 
   private async task(client: Client, remotePath: string, localPath: string) {
-    const sftp = await this.sftp(client);
+    if (!this.sftp) { this.sftp = await this.getSftp(client); }
 
     return new Promise((resolve, reject) => {
-      sftp.fastPut(localPath, remotePath, err => {
+      this.sftp.fastPut(localPath, remotePath, err => {
         if (err) { return reject(err); }
         resolve();
       });
@@ -47,7 +46,7 @@ class PutCommand implements ICommand {
     return (new Date()).toJSON().substr(11, 8);
   }
 
-  private async sftp(client: Client): Promise<SFTPWrapper> {
+  private async getSftp(client: Client): Promise<SFTPWrapper> {
     return new Promise((resolve, reject) => {
       client.sftp((err, sftp) => {
         if (err) { return reject(err); }

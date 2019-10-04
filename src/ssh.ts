@@ -1,19 +1,25 @@
-import { readFileSync } from 'fs';
-import { startShell } from './client-shell';
-import { commands } from './commands';
 import { connect } from './connect';
+import { parseArgs } from './parse-args';
+import { startShell } from './shell/client-shell';
+import { commands } from './shell/commands';
+import { tunnel } from './tunnel';
 
-main(process.argv);
+main(process.argv.slice(2));
 
 async function main(args: string[]) {
-  console.log(args);
+  try {
+    const config = parseArgs(args);
 
-  const client = await connect({
-    host: '206.189.56.128',
-    port: 9760,
-    username: 'oleg',
-    privateKey: readFileSync('/Users/opnk/.ssh/id_rsa'),
-  });
+    const client = await connect(config);
 
-  await startShell(client, commands);
+    if (config.L || config.R) {
+      tunnel(args);
+    } else {
+      await startShell(client, commands);
+    }
+
+  } catch (error) {
+    console.error(error.message || error);
+    process.exit(1);
+  }
 }
