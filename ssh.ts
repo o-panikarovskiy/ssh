@@ -10,11 +10,10 @@ async function main(args: string[]) {
   try {
     const config = parseArgs(args);
 
-    const client = await connect(config);
-
     if (config.L || config.R) {
       tunnel(args);
     } else {
+      const client = await connect(config);
       await startShell(client, commands);
     }
 
